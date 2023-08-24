@@ -4,7 +4,7 @@
 
 ## Deploy method
 1. argoCD-deploy  
-(template)[https://github.com/LinX9581/nodejs-helm-template]
+[nodejs-helm-template](https://github.com/LinX9581/nodejs-helm-template)
 
 2. single-component-deploy  
 cd single-component-deploy  
