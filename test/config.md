@@ -1,0 +1,1 @@
+kubectl create configmap nodejs-template-env --from-env-file=/var/www/.env -n test

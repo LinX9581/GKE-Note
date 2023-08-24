@@ -1,0 +1,25 @@
+apiVersion: apps/v1 # for kubectl versions >= 1.9.0 use apps/v1
+kind: Deployment
+metadata:
+  name: deployment1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: deployment1
+  template:
+    metadata:
+      labels:
+        app: deployment1
+    spec:
+      containers:
+      - name: my-pod
+        image: asia.gcr.io/nownews-analytics/nodejs-template:3.6
+        envFrom:
+          - configMapRef:
+              name: nodejs-template-env
+        ports:
+        - containerPort: 3005
+        resources: #container的資源設定
+          requests:
+            cpu: 100m
