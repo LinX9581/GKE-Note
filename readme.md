@@ -4,8 +4,10 @@
 
 ## Deploy method
 1. argoCD-deploy  
-2. single-comnent-deploy  
+(template)[https://github.com/LinX9581/nodejs-helm-template]
 
+2. single-component-deploy  
+cd single-component-deploy  
 
 ## Create Cluster & Connect to GKE Cluster
 
