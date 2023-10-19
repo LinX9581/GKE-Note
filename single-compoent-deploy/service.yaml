@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name: service1
 spec:
-  type: NodePort
+  type: ClusterIP    # 要用Domain連就用 ClusterIP , IP:Port 用 NodePort 
   selector:
     app: deployment1
   ports:
     - protocol: TCP
-      port: 3005
-      targetPort: 3005
+      port: 3006
+      targetPort: 3006
