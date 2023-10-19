@@ -5,11 +5,11 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    # nginx.ingress.kubernetes.io/rewrite-target: /   # 讓所有路徑都導到 /
 spec:
   ingressClassName: nginx
   rules:
-  - host: nodejs-template.linx.website
+  - host: nodejs-template3.linx.website
     http:
       paths:
       - path: /(.*)

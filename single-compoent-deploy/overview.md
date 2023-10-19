@@ -1,25 +1,5 @@
 # 原理
 
-可以綁定DNS
-並根據$uri 來判斷要連到哪個 service
-要注意 一般的ingress A路徑 只會連到 service 的A路徑
-所以多路徑 就要寫多個rule
-或透過 nginx controller
-
-blue.linx.website/blue -> blue-service/blue
-ex.
-  rules:
-  - host: blue.linx.website
-    http:
-      paths:
-      - path: /blue
-        pathType: Prefix  
-        backend:
-          service:
-            name: blue-service
-            port:
-              number: 3000
-
 實際上會建立 GCP Loadbalancer
 連規則都會一併建立完成
 如果刪除 ingress 則 GCP Loadbalancer 跟著刪除
