@@ -18,4 +18,4 @@ spec:
           service:
             name: service1
             port:
-              number: 3006
+              number: 3005

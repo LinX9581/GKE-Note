@@ -11,16 +11,25 @@ kubectl create namespace nodejs-template1
 kubectl create configmap nodejs-template-env --from-env-file=/var/www/.env -n nodejs-template1
 kcy deploy.yaml -n nodejs-template1
 kcy service.yaml -n nodejs-template1
-kcy ingress.yaml -n nodejs-template1
+kcy ingress.yaml -n nodejs-template1 (會觸發建立 GCP LB 並且分配一個外部IP)
 
-* 檢視所有 nodejs-template1
-kubectl get all -n nodejs-template1
-kgp -n nodejs-template1
+* view all  
+kubectl get all -n nodejs-template1  
+kgp -n nodejs-template1  
+
+* restart deployment  
+kubectl rollout restart deployment/deployment1 -n nodejs-template1  
 
 * 連線方式
-pod 內部IP:Port
-worker node IP:Service Port
-ingress 設定的 domain 
+透過 deployment 的 port-forward 連線 (localhost:3001, service:3005)
+kubectl port-forward --address 0.0.0.0 deployment/deployment1 3001:3005 -n nodejs-template1
+
+透過 service 的 NodePort 連線
+kdsn 列出所有cluster底下的worker node 用該node:servicePort外連
+
+透過 ingress 的 domain 連線
+
+透過 pod 內部IP:Port  
 
 * 狀況排查 (由底層排查到外層)
 1. k logs podname -n nodejs-template1

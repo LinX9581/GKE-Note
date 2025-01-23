@@ -2,27 +2,19 @@
 1. Create Cluster & Connect to GKE Cluster  
 2. Create Docker Image & push to GCR  
 
-## Deploy method
-1. argoCD-deploy  
-[nodejs-helm-template](https://github.com/LinX9581/nodejs-helm-template)
-
-2. single-component-deploy  
-cd single-component-deploy  
-
 ## Create Cluster & Connect to GKE Cluster
 
 * Get Service Account Auth
 gcloud auth activate-service-account --key-file jsonPath
-gcloud config set project terra-test-353202
+gcloud config set project projectName
 
 * Install gcloud & kubectl  
 ```
 https://cloud.google.com/sdk/docs/install-sdk#linux
 
-curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-419.0.0-linux-x86_64.tar.gz
-tar -xf google-cloud-cli-419.0.0-linux-x86_64.tar.gz
+curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz
+tar -xf google-cloud-cli-linux-x86_64.tar.gz
 ./google-cloud-sdk/install.sh
-source ~/.bashrc
 gcloud components install kubectl
 ```
 
@@ -30,26 +22,47 @@ gcloud components install kubectl
 gcloud container clusters create linxgke --spot  
 
 * Manual Create GKE Cluster & use gcloud connect to cluster  
-gcloud container clusters get-credentials linx-gke --zone=asia-east1 --project=k8s-2022-09-05  
+gcloud container clusters get-credentials linxgke --zone=asia-east1-a --project=projectName
 
-## Create Docker Image & push to GCR
-Auth
+## Create Docker Image & push to artifact registry
 ```
-gcloud auth activate-service-account --key-file jsonPath
-sudo usermod -a -G docker ${USER}
-gcloud auth configure-docker
-gcloud config set project test-project
+GCP_PROJECT_NAME=analytics
+AR_PROJECT_NAME=nodejs-repo
+PROJECT_NAME=nodejs-template
+APP_VERSION=1.8
+CLOUDRUN_SERVICE=my-service1
+
+gcloud auth activate-service-account --key-file $PROJECT_NAME.json
+gcloud config set project $GCP_PROJECT_NAME
+gcloud auth configure-docker $AR_TARGET
+gcloud auth configure-docker --quiet
+gcloud artifacts repositories create $AR_PROJECT_NAME --repository-format=docker --location=asia --description="Docker repository"
+docker build -t asia-docker.pkg.dev/$GCP_PROJECT_NAME/$AR_PROJECT_NAME/$PROJECT_NAME:$APP_VERSION .
+docker images
+docker push asia-docker.pkg.dev/$GCP_PROJECT_NAME/$AR_PROJECT_NAME/$PROJECT_NAME:$APP_VERSION
 ```
 
-image push to gcr
+## push to cloud run
 ```
-docker build -t nodejs-template:3.9 . --no-cache
-docker tag nodejs-template:3.9 asia.gcr.io/test-project/nodejs-template:3.9
-※ 執行container  (但環境變數吃進去後修改 要砍掉container 再重建) 下一行是用掛載的方式
-docker run --name nodejs-template -p 3006:3005 --env-file /var/www/.env -itd asia.gcr.io/test-project/nodejs-template:3.9
-docker run --name nodejs-template -p 3006:3005 -itd -v /var/www/.env:/usr/src/app/.env asia.gcr.io/test-project/nodejs-template:3.9
-docker push asia.gcr.io/test-project/nodejs-template:3.9
+gcloud run deploy $CLOUDRUN_SERVICE \
+    --image=asia-docker.pkg.dev/$GCP_PROJECT_NAME/$AR_PROJECT_NAME/$PROJECT_NAME:$APP_VERSION \
+    --region=asia-east1 \
+    --platform=managed \
+    --allow-unauthenticated \
+    --memory=512Mi \
+    --cpu=1 \
+    --max-instances=3 \
+    --timeout=10m \
+    --concurrency=1 \
+    --set-env-vars=db_user=dev,db_password=00000000
 ```
+
+## Deploy by using ArgoCD
+1. argoCD-deploy  
+[nodejs-helm-template](https://github.com/LinX9581/nodejs-helm-template)
+
+2. single-component-deploy  
+cd single-component-deploy  
 
 
 ## 問題排除

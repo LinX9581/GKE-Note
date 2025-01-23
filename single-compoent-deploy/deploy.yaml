@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: my-pod
-        image: asia.gcr.io/nownews-analytics/nodejs-template:4.3
+        image: asia-docker.pkg.dev/nownews-terraform/nodejs-repo/nodejs-template:2.6
         envFrom:
           - configMapRef:
               name: nodejs-template-env
