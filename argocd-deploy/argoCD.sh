@@ -36,16 +36,16 @@ echo "密碼: $ARGOCD_PASSWORD"
 argocd login $ARGOCD_IP --username admin --password $ARGOCD_PASSWORD --insecure
 
 # 創建 nginx-ingress 應用
-kubectl create namespace nginx-ingress
-argocd app create nginx-ingress \
+kubectl create namespace ingress-nginx
+argocd app create ingress-nginx \
 --repo https://github.com/LinX9581/nginx-ingress \
 --path . \
 --dest-server https://kubernetes.default.svc \
---dest-namespace nginx-ingress \
+--dest-namespace ingress-nginx \
 --sync-policy automated
 
-echo "等待 nginx-ingress 部署完成..."
-kubectl wait --for=condition=Available deployment --all -n nginx-ingress --timeout=300s
+echo "等待 ingress-nginx 部署完成..."
+kubectl wait --for=condition=Available deployment --all -n ingress-nginx --timeout=300s
 
 # 創建 nodejs-helm-template 應用
 kubectl create namespace nodejs-helm-template
@@ -53,7 +53,7 @@ argocd app create nodejs-helm-template \
 --repo https://github.com/LinX9581/nodejs-helm-template \
 --path . \
 --dest-server https://kubernetes.default.svc \
---dest-namespace nodejs-helm-template \
+--dest-namespace nodejs-helm-template 
 # --sync-policy automated
 
 # echo "等待 nodejs-helm-template 部署完成..."
